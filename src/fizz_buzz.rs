@@ -109,14 +109,136 @@ fn fizz_buzz9(n: u8) {
   println!("{}", res)
 }
 
+fn fizz_buzz10(n: u8) {
+  let res = (1..=n)
+    .map(|x: u8| -> String {
+      match (x % 3, x % 5) {
+        (0, 0) => format!("FizzBuzz"),
+        (0, _) => format!("Fizz"),
+        (_, 0) => format!("Buzz"),
+        _ => x.to_string(),
+      }
+    })
+    .collect::<Vec<String>>()
+    .join("\n");
+  println!("{}", res);
+}
+
+use std::ops::Rem;
+
+fn fizz_buzz11(n: u32) {
+  fn fz<T>(x: T, div_3: T, dib_5: T, zero: T) -> String
+  where
+    T: Rem<T, Output = T> + Eq + Copy + ToString,
+  {
+    match (x % div_3 == zero, x % dib_5 == zero) {
+      (true, true) => format!("FizzBuzz"),
+      (true, _) => format!("Fizz"),
+      (_, true) => format!("Buzz"),
+      _ => x.to_string(),
+    }
+  }
+
+  (1..=n)
+    .map(|x| fz(x, 3, 5, 0))
+    .for_each(|x| println!("{}", x))
+}
+
+mod mod1 {
+  struct FizzBuzz<T> {
+    div_3: T,
+    div_5: T,
+    zero: T,
+  }
+
+  impl<T> FizzBuzz<T> {
+    fn new(div_3: T, div_5: T, zero: T) -> FizzBuzz<T> {
+      FizzBuzz { div_3, div_5, zero }
+    }
+  }
+
+  trait ToFzStr<T> {
+    fn to_str(&self, x: T) -> String;
+  }
+
+  impl ToFzStr<u32> for FizzBuzz<u32> {
+    fn to_str(&self, x: u32) -> String {
+      match (x % self.div_3 == self.zero, x % self.div_5 == self.zero) {
+        (true, true) => format!("FizzBuzz"),
+        (true, _) => format!("Fizz"),
+        (_, true) => format!("Buzz"),
+        _ => x.to_string(),
+      }
+    }
+  }
+
+  pub fn fizz_buzz(n: u32) -> String {
+    let fizz_buzzer = FizzBuzz::new(3, 5, 0);
+    return (1..=n)
+      .map(|x| fizz_buzzer.to_str(x))
+      .collect::<Vec<String>>()
+      .join("\n");
+  }
+}
+
+#[test]
+fn one_to_thirty() {
+  const FIZZ_BUZZ_30: &str = "1
+2
+Fizz
+4
+Buzz
+Fizz
+7
+8
+Fizz
+Buzz
+11
+Fizz
+13
+14
+FizzBuzz
+16
+17
+Fizz
+19
+Buzz
+Fizz
+22
+23
+Fizz
+Buzz
+26
+Fizz
+28
+29
+FizzBuzz";
+
+  // assert_eq!(fizz_buzz1(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz2(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz3(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz4(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz5(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz6(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz7(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz8(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz9(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz10(30), FIZZ_BUZZ_30);
+  // assert_eq!(fizz_buzz11(30), FIZZ_BUZZ_30);
+  assert_eq!(mod1::fizz_buzz(30), FIZZ_BUZZ_30);
+}
+
 fn main() {
-  fizz_buzz1(50);
-  fizz_buzz2(50);
-  fizz_buzz3(50);
-  fizz_buzz4(50);
-  fizz_buzz5(50);
-  fizz_buzz6(50);
-  fizz_buzz7(50);
-  fizz_buzz8(50);
-  fizz_buzz9(50);
+  fizz_buzz1(30);
+  fizz_buzz2(30);
+  fizz_buzz3(30);
+  fizz_buzz4(30);
+  fizz_buzz5(30);
+  fizz_buzz6(30);
+  fizz_buzz7(30);
+  fizz_buzz8(30);
+  fizz_buzz9(30);
+  fizz_buzz10(30);
+  fizz_buzz11(30);
+  println!("{}", mod1::fizz_buzz(30));
 }
